@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Silent Hill</title>
+    <style>
+      html, body { margin: 0; padding: 0; overflow: hidden; }
+        #info {
+                position: absolute;
+                padding: 10px;
+                width: 100%;
+                text-align: center;
+                color: 'black';
+            }
+    </style>
+  </head>
+  <body>
+      <div id="info">
+			Tatiana Tolosa<br/>
+            Valentina Gomez <br/>
+            Santiago maecha <br/>
+        </div>
+    <script src="js/three.js"></script>
+	<script src="js/controls/OrbitControls.js"></script>
+	<script src="js/csg.js"></script>
+	<script src="js/THREE.CSG.js"></script>
+    <script>
+		var scene;
+		var aspect; 
+		var camera; 
+		var renderer;
+		var controls;
+
+		init();
+		animate();
+		function init(){
+		
+			//INICIALIZACIÓN
+	        scene = new THREE.Scene();
+            scene.background = new THREE.Color(0xffffff);
+			scene.fog = new THREE.FogExp2( 0xB9B9B9, 0.03 );//------> NIEBLA
+	        aspect = window.innerWidth / window.innerHeight;
+	        camera = new THREE.PerspectiveCamera( 75, aspect, 0.1, 1000);
+	        renderer = new THREE.WebGLRenderer();
+	        renderer.setSize( window.innerWidth, window.innerHeight );
+	        document.body.appendChild( renderer.domElement );
+			controls = new THREE.OrbitControls( camera, renderer.domElement );
+			
+			//ELEMENTOS COMUNES
+			
+			var size = 100;
+			var arrowSize = 1;
+			var divisions = size;
+			var origin = new THREE.Vector3( 0, 0, 0 );
+			
+			//CREAR AMBIENTACION PARA LA NIEBLA
+			
+			var hemisphereLight = new THREE.HemisphereLight(0xfffafa,0x000000, .9)
+			scene.add(hemisphereLight);
+			sun = new THREE.DirectionalLight( 0xcdc1c5, 0.9);
+			sun.position.set( 0,200,0 );
+			sun.castShadow = true;
+			scene.add(sun);
+			
+			//CRACION DE  OBJETOS
+			
+			//SUELO
+			
+			var geometry = new THREE.BoxGeometry(3000,1,3000);
+			var material = new THREE.MeshLambertMaterial( { color:0X4B3621 } );
+			suelo = new THREE.Mesh( geometry, material );
+			scene.add( suelo );
+			
+			//ANDENES
+			
+			var geometry = new THREE.BoxGeometry(100,0.5,100);
+			var material = new THREE.MeshLambertMaterial( { color:'green' } );
+			anden = new THREE.Mesh( geometry, material );
+			scene.add( anden);
+			
+			anden.translateY(1);
+			anden.translateX(55);
+			anden.translateZ(-55);
+			
+			//CEMENTERIO
+			
+			//REJAS
+			
+		rectangulo= new THREE.Geometry();
+	       var resCub=10;
+            var matRec = new THREE.PointsMaterial( { color: 'black', size: 1 } );	
+            for( var i = 0; i < resCub; i++){
+				for( var j = 0; j < resCub; j++){
+                   var punto1 = new THREE.Vector3();
+                   punto1.x =  (i/0.35);
+                   punto1.y = j/2;
+                    rectangulo.vertices.push( punto1 );
+                    
+					}
+				}
+        reja = new THREE.Points(rectangulo, matRec);
+		reja1 = new THREE.Points(rectangulo, matRec);
+		reja2 = new THREE.Points(rectangulo, matRec);
+		reja3 = new THREE.Points(rectangulo, matRec);
+		
+		reja.translateY(2);
+		reja.translateX(15);
+		reja.translateZ(-10);
+		scene.add(reja);
+		
+		reja1.translateY(2);
+		reja1.translateX(70);
+		reja1.translateZ(-10);
+		scene.add(reja1);
+		
+		reja2.translateY(2);
+		reja2.translateX(15);
+		reja2.translateZ(-100);
+		scene.add(reja2);
+		
+		reja3.translateY(2);
+		reja3.translateX(70);
+		reja3.translateZ(-100);
+		scene.add(reja3);
+		
+		rectangulo1= new THREE.Geometry();
+	       var resCub=10;	
+            for( var k = 0; k < resCub; k++){
+				for( var j = 0; j < resCub; j++){
+                   var punto1 = new THREE.Vector3();
+                   punto1.y =  (j/2);
+                   punto1.z = k/0.35;
+                    rectangulo1.vertices.push( punto1 );
+                    
+					}
+				}
+        reja4 = new THREE.Points(rectangulo1, matRec);
+		reja5 = new THREE.Points(rectangulo1, matRec);
+		reja6 = new THREE.Points(rectangulo1, matRec);
+		reja7 = new THREE.Points(rectangulo1, matRec);
+		
+		reja4.translateY(2);
+		reja4.translateX(10);
+		reja4.translateZ(-95);
+		scene.add(reja4);
+		
+		reja5.translateY(2);
+		reja5.translateX(10);
+		reja5.translateZ(-40);
+		scene.add(reja5);
+		
+		reja6.translateY(2);
+		reja6.translateX(100);
+		reja6.translateZ(-40);
+		scene.add(reja6);
+		
+		reja7.translateY(2);
+		reja7.translateX(100);
+		reja7.translateZ(-95);
+		scene.add(reja7);
+		
+		//COLUMNAS y LAPIDAS
+		
+		var geometry1 = new THREE.BoxGeometry(4,7,4);
+		var geometry2 = new THREE.SphereGeometry( 2, 32, 32 );
+		var geometry3 = new THREE.BoxGeometry(5,5,5);
+		var geometry4 = new THREE.BoxGeometry(1,8,1);
+		var geometry5 = new THREE.BoxGeometry(5,1,1);
+		var geometry8 = new THREE.SphereGeometry( 4, 5, 5 );
+		var material2 = new THREE.MeshLambertMaterial( { color:'gray' } );
+		
+			//CREACION DE COLUMNAS
+		
+			columna = new THREE.Mesh( geometry1, material2 );
+			columna1 = new THREE.Mesh( geometry1, material2 );
+			columna2 = new THREE.Mesh( geometry1, material2 );
+			columna3 = new THREE.Mesh( geometry1, material2 );
+			columna4 = new THREE.Mesh( geometry1, material2 );
+			columna5 = new THREE.Mesh( geometry1, material2 );
+			columna6 = new THREE.Mesh( geometry1, material2 );
+			columna7 = new THREE.Mesh( geometry1, material2 );
+			columna8 = new THREE.Mesh( geometry1, material2 );
+			columna9 = new THREE.Mesh( geometry1, material2 );
+			columna10 = new THREE.Mesh( geometry1, material2 );
+			columna11 = new THREE.Mesh( geometry1, material2 );
+			esfera = new THREE.Mesh( geometry2, material2 );
+			esfera1 = new THREE.Mesh( geometry2, material2 );
+			esfera2 = new THREE.Mesh( geometry2, material2 );
+			esfera3 = new THREE.Mesh( geometry2, material2 );
+			
+			// CRACION DE TUMBA PRINCIPAL
+			
+			lapida = new THREE.Mesh( geometry3, material2 );
+			adorno = new THREE.Mesh( geometry4, material2 );
+			adorno1 = new THREE.Mesh( geometry5, material2 );
+			
+			//POSICIONAMIENTO E INVOCACION DE COLUMNAS
+			
+			columna.translateX(10)
+			columna.translateZ(-10);
+			columna.translateY(4);
+			esfera.translateX(10)
+			esfera.translateZ(-10);
+			esfera.translateY(8);
+			scene.add(columna,esfera);
+			
+			
+			columna1.translateX(10)
+			columna1.translateZ(-100);
+			columna1.translateY(4);
+			esfera1.translateX(10)
+			esfera1.translateZ(-100);
+			esfera1.translateY(8);
+			scene.add(columna1,esfera1);
+			
+			columna2.translateX(100)
+			columna2.translateZ(-10);
+			columna2.translateY(4);
+			esfera2.translateX(100)
+			esfera2.translateZ(-10);
+			esfera2.translateY(8);
+			scene.add(columna2,esfera2);
+			
+			columna3.translateX(100)
+			columna3.translateZ(-100);
+			columna3.translateY(4);
+			esfera3.translateX(100)
+			esfera3.translateZ(-100);
+			esfera3.translateY(8);
+			scene.add(columna3,esfera3);
+			
+			columna4.translateX(45)
+			columna4.translateZ(-10);
+			columna4.translateY(4);
+			scene.add(columna4);
+			
+			columna5.translateX(65)
+			columna5.translateZ(-10);
+			columna5.translateY(4);
+			scene.add(columna5);
+			
+			columna6.translateX(45)
+			columna6.translateZ(-100);
+			columna6.translateY(4);
+			scene.add(columna6);
+			
+			columna7.translateX(65)
+			columna7.translateZ(-100);
+			columna7.translateY(4);
+			scene.add(columna7);
+			
+			columna8.translateX(10)
+			columna8.translateZ(-45);
+			columna8.translateY(4);
+			scene.add(columna8);
+			
+			columna9.translateX(10)
+			columna9.translateZ(-65);
+			columna9.translateY(4);
+			scene.add(columna9);
+			
+			columna10.translateX(100)
+			columna10.translateZ(-45);
+			columna10.translateY(4);
+			scene.add(columna10);
+			
+			columna11.translateX(100)
+			columna11.translateZ(-65);
+			columna11.translateY(4);
+			scene.add(columna11);
+			
+			//POSICIONAMIENTO E INVOCACION DE TUMBA PRINCIPAL
+			
+			lapida.translateY(3.5)
+			lapida.translateX(55)
+			lapida.translateZ(-55)
+			adorno.translateY(10)
+			adorno.translateX(55)
+			adorno.translateZ(-55)
+			adorno1.translateY(12)
+			adorno1.translateX(54.8)
+			adorno1.translateZ(-55)
+			scene.add(lapida, adorno, adorno1);
+			
+			//ARCOS
+			
+			function CustomSinCurve( scale ) {
+			THREE.Curve.call( this );
+			this.scale = ( scale === undefined ) ? 1 : scale;
+	}
+			CustomSinCurve.prototype = Object.create( THREE.Curve.prototype );
+			CustomSinCurve.prototype.constructor = CustomSinCurve;
+			CustomSinCurve.prototype.getPoint = function ( t ) {
+			
+			var tx = 0;
+			var ty = Math.sin(  Math.PI * t );
+			var tz = Math.cos(  Math.PI * t );
+
+			return new THREE.Vector3( tx, ty, tz ).multiplyScalar( this.scale );
+	};
+			var path = new CustomSinCurve( 10 );
+			var geometry6 = new THREE.TubeGeometry( path, 20, 2, 8, false );
+			
+			function CustomSinCurve1( scale1 ) {
+			THREE.Curve.call( this );
+			this.scale1 = ( scale1 === undefined ) ? 1 : scale1;
+	}
+			CustomSinCurve1.prototype = Object.create( THREE.Curve.prototype );
+			CustomSinCurve1.prototype.constructor = CustomSinCurve1;
+			CustomSinCurve1.prototype.getPoint = function ( t1 ) {
+			
+			var t1x = Math.cos(  Math.PI * t1 );
+			var t1y = Math.sin(  Math.PI * t1 );
+			var t1z = 0;
+
+			return new THREE.Vector3( t1x, t1y, t1z ).multiplyScalar( this.scale1 );
+	};
+			var path1 = new CustomSinCurve1( 10 );
+			var geometry7 = new THREE.TubeGeometry( path1, 20, 2, 8, false );
+			
+			arco = new THREE.Mesh( geometry6, material2 );
+			arco1 = new THREE.Mesh( geometry6, material2 );
+			arco2 = new THREE.Mesh( geometry7, material2 );
+			arco3 = new THREE.Mesh( geometry7, material2 );
+			
+			//POSICIONAMIENTO Y INVOCACION DE LOS ARCOS
+			
+			arco.translateX(100)
+			arco.translateZ(-55);
+			arco.translateY(7.5);
+			scene.add( arco );
+			
+			arco1.translateX(10)
+			arco1.translateZ(-55);
+			arco1.translateY(7.5);
+			scene.add( arco1 );
+			
+			arco2.translateX(55)
+			arco2.translateZ(-10);
+			arco2.translateY(7.5);
+			scene.add( arco2 );
+			
+			arco3.translateX(55)
+			arco3.translateZ(-100);
+			arco3.translateY(7.5);
+			scene.add( arco3 );
+			
+			//ROCAS
+			
+			roca = new THREE.Mesh( geometry8, material2 );
+			roca1 = new THREE.Mesh( geometry8, material2 );
+			
+			roca.translateX(80)
+			roca.translateZ(-80);
+			roca.translateY(2);
+			scene.add( roca );
+			
+			roca1.translateX(30)
+			roca1.translateZ(-30);
+			roca1.translateY(2);
+			scene.add( roca1 );
+			
+			//BOSQUE
+			
+			var geoCilindro = new THREE.Geometry();
+			var matPunto = new THREE.PointsMaterial( { color:'green', size: 2 } );
+            var zTemp = 0;
+            var res = 25.0;
+            for( var i = 0; i < res; i++){
+                for( var j = 0; j < res; j++){
+                    var punto = new THREE.Vector3();
+                    punto.x = (10.0 * (res - i) / res ) * Math.cos( ( j * 2.0 * Math.PI ) / res) ;
+                    punto.y = 50.0 * i / res;
+                    punto.z = (10.0 * (res - i) / res ) * Math.sin( ( j * 2.0 * Math.PI ) / res) ;
+                    geoCilindro.vertices.push( punto );
+                }
+            }
+			
+			//CREACION DE LAS HOJAS
+			
+			hojas = new THREE.Points( geoCilindro, matPunto );
+			hojas1 = new THREE.Points( geoCilindro, matPunto );
+			hojas2 = new THREE.Points( geoCilindro, matPunto );
+			hojas3 = new THREE.Points( geoCilindro, matPunto );
+			hojas4 = new THREE.Points( geoCilindro, matPunto );
+			hojas5 = new THREE.Points( geoCilindro, matPunto );
+			hojas6 = new THREE.Points( geoCilindro, matPunto );
+			hojas7 = new THREE.Points( geoCilindro, matPunto );
+			hojas8 = new THREE.Points( geoCilindro, matPunto );
+			hojas9 = new THREE.Points( geoCilindro, matPunto );
+			hojas10 = new THREE.Points( geoCilindro, matPunto );
+			hojas11 = new THREE.Points( geoCilindro, matPunto );
+			hojas12 = new THREE.Points( geoCilindro, matPunto );
+			hojas13 = new THREE.Points( geoCilindro, matPunto );
+			hojas14 = new THREE.Points( geoCilindro, matPunto );
+			hojas15 = new THREE.Points( geoCilindro, matPunto );
+			hojas16 = new THREE.Points( geoCilindro, matPunto );
+			hojas17 = new THREE.Points( geoCilindro, matPunto );
+			hojas18 = new THREE.Points( geoCilindro, matPunto );
+			hojas19 = new THREE.Points( geoCilindro, matPunto );
+			hojas20 = new THREE.Points( geoCilindro, matPunto );
+			hojas21 = new THREE.Points( geoCilindro, matPunto );
+			hojas22 = new THREE.Points( geoCilindro, matPunto );
+			hojas23 = new THREE.Points( geoCilindro, matPunto );
+			hojas24 = new THREE.Points( geoCilindro, matPunto );
+			hojas25 = new THREE.Points( geoCilindro, matPunto );
+			hojas26 = new THREE.Points( geoCilindro, matPunto );
+			hojas27 = new THREE.Points( geoCilindro, matPunto );
+			hojas28 = new THREE.Points( geoCilindro, matPunto );
+			hojas28 = new THREE.Points( geoCilindro, matPunto );
+			hojas28 = new THREE.Points( geoCilindro, matPunto );
+			hojas29 = new THREE.Points( geoCilindro, matPunto );
+			hojas30 = new THREE.Points( geoCilindro, matPunto );
+			hojas31 = new THREE.Points( geoCilindro, matPunto );
+			hojas32 = new THREE.Points( geoCilindro, matPunto );
+			hojas33 = new THREE.Points( geoCilindro, matPunto );
+			hojas34 = new THREE.Points( geoCilindro, matPunto );
+			hojas35 = new THREE.Points( geoCilindro, matPunto );
+			hojas36 = new THREE.Points( geoCilindro, matPunto );
+			hojas37 = new THREE.Points( geoCilindro, matPunto );
+			hojas38 = new THREE.Points( geoCilindro, matPunto );
+			hojas39 = new THREE.Points( geoCilindro, matPunto );
+			hojas40 = new THREE.Points( geoCilindro, matPunto );
+			hojas41 = new THREE.Points( geoCilindro, matPunto );
+			hojas42 = new THREE.Points( geoCilindro, matPunto );
+			hojas43 = new THREE.Points( geoCilindro, matPunto );
+			
+			//CREACION DEL TRONCO
+			
+			var geometry = new THREE.CylinderGeometry( 1, 2, 40, 30 );
+			var material = new THREE.MeshBasicMaterial( {color: 0xA18262} );
+			tronco= new THREE.Mesh( geometry, material );
+			tronco1= new THREE.Mesh( geometry, material );
+			tronco2= new THREE.Mesh( geometry, material );
+			tronco3= new THREE.Mesh( geometry, material );
+			tronco4= new THREE.Mesh( geometry, material );
+			tronco5= new THREE.Mesh( geometry, material );
+			tronco6= new THREE.Mesh( geometry, material );
+			tronco7= new THREE.Mesh( geometry, material );
+			tronco8= new THREE.Mesh( geometry, material );
+			tronco9= new THREE.Mesh( geometry, material );
+			tronco10= new THREE.Mesh( geometry, material );
+			tronco11= new THREE.Mesh( geometry, material );
+			tronco12= new THREE.Mesh( geometry, material );
+			tronco13= new THREE.Mesh( geometry, material );
+			tronco14= new THREE.Mesh( geometry, material );
+			tronco15= new THREE.Mesh( geometry, material );
+			tronco16= new THREE.Mesh( geometry, material );
+			tronco17= new THREE.Mesh( geometry, material );
+			tronco18= new THREE.Mesh( geometry, material );
+			tronco19= new THREE.Mesh( geometry, material );
+			tronco20= new THREE.Mesh( geometry, material );
+			tronco21= new THREE.Mesh( geometry, material );
+			tronco22= new THREE.Mesh( geometry, material );
+			tronco23= new THREE.Mesh( geometry, material );
+			tronco24= new THREE.Mesh( geometry, material );
+			tronco25= new THREE.Mesh( geometry, material );
+			tronco26= new THREE.Mesh( geometry, material );
+			tronco27= new THREE.Mesh( geometry, material );
+			tronco28= new THREE.Mesh( geometry, material );
+			tronco29= new THREE.Mesh( geometry, material );
+			tronco30= new THREE.Mesh( geometry, material );
+			tronco31= new THREE.Mesh( geometry, material );
+			tronco32= new THREE.Mesh( geometry, material );
+			tronco33= new THREE.Mesh( geometry, material );
+			tronco34= new THREE.Mesh( geometry, material );
+			tronco35= new THREE.Mesh( geometry, material );
+			tronco36= new THREE.Mesh( geometry, material );
+			tronco37= new THREE.Mesh( geometry, material );
+			tronco38= new THREE.Mesh( geometry, material );
+			tronco39= new THREE.Mesh( geometry, material );
+			tronco40= new THREE.Mesh( geometry, material );
+			tronco41= new THREE.Mesh( geometry, material );
+			tronco42= new THREE.Mesh( geometry, material );
+			tronco43= new THREE.Mesh( geometry, material );
+			
+			//INVOCACION Y POSICIONAMIENTO DE LOS ARBOLES 
+			
+			hojas.translateY(14);
+			tronco.translateY(20);
+			scene.add(tronco, hojas);
+			
+			hojas1.translateY(14);
+			tronco1.translateY(20);
+			hojas1.translateZ(-10);
+			tronco1.translateZ(-10);
+			scene.add(tronco1, hojas1);
+			
+			hojas2.translateY(14);
+			tronco2.translateY(20);
+			hojas2.translateZ(-20);
+			tronco2.translateZ(-20);
+			scene.add(tronco2, hojas2);
+			
+			hojas3.translateY(14);
+			tronco3.translateY(20);
+			hojas3.translateZ(-30);
+			tronco3.translateZ(-30);
+			scene.add(tronco3, hojas3);
+			
+			hojas4.translateY(14);
+			tronco4.translateY(20);
+			hojas4.translateZ(-40);
+			tronco4.translateZ(-40);
+			scene.add(tronco4, hojas4);
+			
+			hojas5.translateY(14);
+			tronco5.translateY(20);
+			hojas5.translateZ(-50);
+			tronco5.translateZ(-50);
+			scene.add(tronco5, hojas5);
+			
+			hojas6.translateY(14);
+			tronco6.translateY(20);
+			hojas6.translateZ(-60);
+			tronco6.translateZ(-60);
+			scene.add(tronco6, hojas6);
+			
+			hojas7.translateY(14);
+			tronco7.translateY(20);
+			hojas7.translateZ(-70);
+			tronco7.translateZ(-70);
+			scene.add(tronco7, hojas7);
+			
+			hojas8.translateY(14);
+			tronco8.translateY(20);
+			hojas8.translateZ(-80);
+			tronco8.translateZ(-80);
+			scene.add(tronco8, hojas8);
+			
+			hojas9.translateY(14);
+			tronco9.translateY(20);
+			hojas9.translateZ(-90);
+			tronco9.translateZ(-90);
+			scene.add(tronco9, hojas9);
+			
+			hojas10.translateY(14);
+			tronco10.translateY(20);
+			hojas10.translateZ(-100);
+			tronco10.translateZ(-100);
+			scene.add(tronco10, hojas10);
+			
+			hojas11.translateY(14);
+			tronco11.translateY(20);
+			hojas11.translateZ(-110);
+			tronco11.translateZ(-110);
+			scene.add(tronco11, hojas11);
+			
+			hojas12.translateY(14);
+			tronco12.translateY(20);
+			hojas12.translateZ(-110);
+			tronco12.translateZ(-110);
+			hojas12.translateX(10);
+			tronco12.translateX(10);
+			scene.add(tronco12, hojas12);
+			
+			hojas13.translateY(14);
+			tronco13.translateY(20);
+			hojas13.translateZ(-110);
+			tronco13.translateZ(-110);
+			hojas13.translateX(20);
+			tronco13.translateX(20);
+			scene.add(tronco13, hojas13);
+			
+			hojas14.translateY(14);
+			tronco14.translateY(20);
+			hojas14.translateZ(-110);
+			tronco14.translateZ(-110);
+			hojas14.translateX(30);
+			tronco14.translateX(30);
+			scene.add(tronco14, hojas14);
+			
+			hojas15.translateY(14);
+			tronco15.translateY(20);
+			hojas15.translateZ(-110);
+			tronco15.translateZ(-110);
+			hojas15.translateX(40);
+			tronco15.translateX(40);
+			scene.add(tronco15, hojas15);
+			
+			hojas16.translateY(14);
+			tronco16.translateY(20);
+			hojas16.translateZ(-110);
+			tronco16.translateZ(-110);
+			hojas16.translateX(50);
+			tronco16.translateX(50);
+			scene.add(tronco16, hojas16);
+			
+			hojas17.translateY(14);
+			tronco17.translateY(20);
+			hojas17.translateZ(-110);
+			tronco17.translateZ(-110);
+			hojas17.translateX(60);
+			tronco17.translateX(60);
+			scene.add(tronco17, hojas17);
+			
+			hojas18.translateY(14);
+			tronco18.translateY(20);
+			hojas18.translateZ(-110);
+			tronco18.translateZ(-110);
+			hojas18.translateX(70);
+			tronco18.translateX(70);
+			scene.add(tronco18, hojas18);
+			
+			hojas19.translateY(14);
+			tronco19.translateY(20);
+			hojas19.translateZ(-110);
+			tronco19.translateZ(-110);
+			hojas19.translateX(80);
+			tronco19.translateX(80);
+			scene.add(tronco19, hojas19);
+			
+			hojas20.translateY(14);
+			tronco20.translateY(20);
+			hojas20.translateZ(-110);
+			tronco20.translateZ(-110);
+			hojas20.translateX(90);
+			tronco20.translateX(90);
+			scene.add(tronco20, hojas20);
+			
+			hojas21.translateY(14);
+			tronco21.translateY(20);
+			hojas21.translateZ(-110);
+			tronco21.translateZ(-110);
+			hojas21.translateX(100);
+			tronco21.translateX(100);
+			scene.add(tronco21, hojas21);
+			
+			hojas22.translateY(14);
+			tronco22.translateY(20);
+			hojas22.translateZ(-110);
+			tronco22.translateZ(-110);
+			hojas22.translateX(110);
+			tronco22.translateX(110);
+			scene.add(tronco22, hojas22);
+			
+			hojas23.translateY(14);
+			tronco23.translateY(20);
+			hojas23.translateZ(-100);
+			tronco23.translateZ(-100);
+			hojas23.translateX(110);
+			tronco23.translateX(110);
+			scene.add(tronco23, hojas23);
+			
+			hojas24.translateY(14);
+			tronco24.translateY(20);
+			hojas24.translateZ(-90);
+			tronco24.translateZ(-90);
+			hojas24.translateX(110);
+			tronco24.translateX(110);
+			scene.add(tronco24, hojas24);
+			
+			hojas25.translateY(14);
+			tronco25.translateY(20);
+			hojas25.translateZ(-80);
+			tronco25.translateZ(-80);
+			hojas25.translateX(110);
+			tronco25.translateX(110);
+			scene.add(tronco25, hojas25);
+			
+			hojas26.translateY(14);
+			tronco26.translateY(20);
+			hojas26.translateZ(-70);
+			tronco26.translateZ(-70);
+			hojas26.translateX(110);
+			tronco26.translateX(110);
+			scene.add(tronco26, hojas26);
+			
+			hojas27.translateY(14);
+			tronco27.translateY(20);
+			hojas27.translateZ(-60);
+			tronco27.translateZ(-60);
+			hojas27.translateX(110);
+			tronco27.translateX(110);
+			scene.add(tronco27, hojas27);
+			
+			hojas28.translateY(14);
+			tronco28.translateY(20);
+			hojas28.translateZ(-50);
+			tronco28.translateZ(-50);
+			hojas28.translateX(110);
+			tronco28.translateX(110);
+			scene.add(tronco28, hojas28);
+			
+			hojas29.translateY(14);
+			tronco29.translateY(20);
+			hojas29.translateZ(-40);
+			tronco29.translateZ(-40);
+			hojas29.translateX(110);
+			tronco29.translateX(110);
+			scene.add(tronco29, hojas29);
+			
+			hojas30.translateY(14);
+			tronco30.translateY(20);
+			hojas30.translateZ(-30);
+			tronco30.translateZ(-30);
+			hojas30.translateX(110);
+			tronco30.translateX(110);
+			scene.add(tronco30, hojas30);
+			
+			hojas31.translateY(14);
+			tronco31.translateY(20);
+			hojas31.translateZ(-20);
+			tronco31.translateZ(-20);
+			hojas31.translateX(110);
+			tronco31.translateX(110);
+			scene.add(tronco31, hojas31);
+			
+			hojas32.translateY(14);
+			tronco32.translateY(20);
+			hojas32.translateZ(-10);
+			tronco32.translateZ(-10);
+			hojas32.translateX(110);
+			tronco32.translateX(110);
+			scene.add(tronco32, hojas32);
+			
+			hojas33.translateY(14);
+			tronco33.translateY(20);
+			hojas33.translateX(110);
+			tronco33.translateX(110);
+			scene.add(tronco33, hojas33);
+			
+			hojas34.translateY(14);
+			tronco34.translateY(20);
+			hojas34.translateX(100);
+			tronco34.translateX(100);
+			scene.add(tronco34, hojas34);
+			
+			hojas35.translateY(14);
+			tronco35.translateY(20);
+			hojas35.translateX(90);
+			tronco35.translateX(90);
+			scene.add(tronco35, hojas35);
+			
+			hojas36.translateY(14);
+			tronco36.translateY(20);
+			hojas36.translateX(80);
+			tronco36.translateX(80);
+			scene.add(tronco36, hojas36);
+			
+			hojas37.translateY(14);
+			tronco37.translateY(20);
+			hojas37.translateX(70);
+			tronco37.translateX(70);
+			scene.add(tronco37, hojas37);
+			
+			hojas38.translateY(14);
+			tronco38.translateY(20);
+			hojas38.translateX(60);
+			tronco38.translateX(60);
+			scene.add(tronco38, hojas38);
+			
+			hojas39.translateY(14);
+			tronco39.translateY(20);
+			hojas39.translateX(50);
+			tronco39.translateX(50);
+			scene.add(tronco39, hojas39);
+			
+			hojas40.translateY(14);
+			tronco40.translateY(20);
+			hojas40.translateX(40);
+			tronco40.translateX(40);
+			scene.add(tronco40, hojas40);
+			
+			hojas41.translateY(14);
+			tronco41.translateY(20);
+			hojas41.translateX(30);
+			tronco41.translateX(30);
+			scene.add(tronco41, hojas41);
+			
+			hojas42.translateY(14);
+			tronco42.translateY(20);
+			hojas42.translateX(20);
+			tronco42.translateX(20);
+			scene.add(tronco42, hojas42);
+			
+			hojas43.translateY(14);
+			tronco43.translateY(20);
+			hojas43.translateX(10);
+			tronco43.translateX(10);
+			scene.add(tronco43, hojas43);
+			
+			//POSICION DE LA CAMARA
+			
+			camera.position.x = 50;
+			camera.position.y = 50;
+		  	camera.position.z = -50;
+			camera.lookAt( adorno );
+			
+		}
+		function animate(){
+			requestAnimationFrame( animate );
+			controls.update();
+			render();
+		}
+		function render(){
+			renderer.render( scene, camera );
+		}
+    </script>
+  </body>
+</html>
