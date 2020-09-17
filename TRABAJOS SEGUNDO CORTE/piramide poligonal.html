@@ -54,8 +54,17 @@
             var arrowY = new THREE.ArrowHelper( y, origin, arrowSize, colorG );
             var arrowZ = new THREE.ArrowHelper( z, origin, arrowSize, colorB );
 			
-			//CREAR LAS GEOMETRÍAS
+			//ILUMINACION 
 			
+			
+			var hemisphereLight = new THREE.HemisphereLight(0xfffafa,0x000000, .9)
+			scene.add(hemisphereLight);
+			sun = new THREE.DirectionalLight( 0xcdc1c5, 0.9);
+			sun.position.set( 20,-10,20 );
+			sun.castShadow = true;
+			scene.add(sun);
+			
+			//CREAR LAS GEOMETRÍAS
             //TRIANGULOS 1
             var geoTriangulo = new THREE.Geometry();
 			
@@ -117,28 +126,42 @@
 			geoTriangulo3.computeFaceNormals();
 			
 			//CUADRADO BASE
-			var geoCuadrado = new THREE.Geometry();
+		//TRIANGULOS 5
+			var geoTriangulo4 = new THREE.Geometry();
 			
 			//VERTICES
-			var v0 = new THREE.Vector3( -2.0, 0.0, 2.0);
-			var v1 = new THREE.Vector3( 2.0,0.0, 2.0);
-			var v2 = new THREE.Vector3( -2.0, 0.0,-2.0);
-			var v3 = new THREE.Vector3( 2.0, 0.0, -2.0);
-			geoCuadrado.vertices.push( v0 );
-			geoCuadrado.vertices.push( v1 );
-			geoCuadrado.vertices.push( v2 );
-			geoCuadrado.vertices.push( v3 );
+			var v0 = new THREE.Vector3( 2.0, 0.0, 2.0);
+			var v1 = new THREE.Vector3( -2.0,0.0, 2.0);
+			var v2 = new THREE.Vector3(-2.0,0.0, -2.0);
+			geoTriangulo4.vertices.push( v0 );
+			geoTriangulo4.vertices.push( v1 );
+			geoTriangulo4.vertices.push( v2 );
 			
 			//CARAS
-			geoCuadrado.faces.push( new THREE.Face3(0,1,2,3) );
-			geoCuadrado.computeFaceNormals();
+			geoTriangulo4.faces.push( new THREE.Face3(0,1,2) );
+			geoTriangulo4.computeFaceNormals();
+			
+			//TRIANGULOS 6
+			var geoTriangulo5 = new THREE.Geometry();
+			
+			//VERTICES
+			var v0 = new THREE.Vector3( -2.0, 0.0, -2.0);
+			var v1 = new THREE.Vector3( 2.0,0.0, -2.0);
+			var v2 = new THREE.Vector3(2.0,0.0, 2.0);
+			geoTriangulo5.vertices.push( v0 );
+			geoTriangulo5.vertices.push( v1 );
+			geoTriangulo5.vertices.push( v2 );
+			
+			//CARAS
+			geoTriangulo5.faces.push( new THREE.Face3(0,1,2) );
+			geoTriangulo5.computeFaceNormals();
 			
 			//MATERIAL Y CREACIÓN DEL OBJETO
-            var matPlano = new THREE.MeshBasicMaterial( { color:'yellow' } );
-			var matPlano1 = new THREE.MeshBasicMaterial( { color:'red' } );
-			var matPlano2 = new THREE.MeshBasicMaterial( { color:'blue' } );
-			var matPlano3 = new THREE.MeshBasicMaterial( { color:'orange' } );
-			var matPlano4 = new THREE.MeshBasicMaterial( { color:'green' } );
+            var matPlano = new THREE.MeshLambertMaterial( { color:'yellow' } );
+			var matPlano1 = new THREE.MeshLambertMaterial( { color:'red' } );
+			var matPlano2 = new THREE.MeshLambertMaterial( { color:'blue' } );
+			var matPlano3 = new THREE.MeshLambertMaterial( { color:'orange' } );
+			var matPlano4 = new THREE.MeshLambertMaterial( { color:'green' } );
 			
 			//CREAR LOS OBJETOS
 			
@@ -146,11 +169,12 @@
 			triangulo1 = new THREE.Mesh( geoTriangulo1, matPlano1 );
 			triangulo2 = new THREE.Mesh( geoTriangulo2, matPlano2 );
 			triangulo3 = new THREE.Mesh( geoTriangulo3, matPlano3 );
-			cuadrado = new THREE.Mesh( geoCuadrado, matPlano4 );
+			triangulo4 = new THREE.Mesh( geoTriangulo4, matPlano4 );
+			triangulo5 = new THREE.Mesh( geoTriangulo5, matPlano4 );
 			
 		  	//AGREGAR A LA ESCENA
 			
-		  	scene.add( triangulo, triangulo1,triangulo2, triangulo3,cuadrado );
+		  	scene.add( triangulo, triangulo1,triangulo2, triangulo3,triangulo4, triangulo5 );
             scene.add( gridHelperXZ );
 		  	scene.add( arrowX );	
 		  	scene.add( arrowY );	
