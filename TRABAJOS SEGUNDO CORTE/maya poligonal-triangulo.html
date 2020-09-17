@@ -1,17 +1,17 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Cono</title>
+    <title>maya poligonal-triangulo</title>
     <style>
       html, body { margin: 0; padding: 0; overflow: hidden; }
     </style>
   </head>
   <body>
-    <script src="js/three.min.js"></script>
+    <script src="js/three.js"></script>
+	<script src="js/controls/OrbitControls.js"></script>
     <script>
-		var scene, aspect, camera, renderer;
-		var startTime = Date.now();
-		
+		var scene, aspect, camera, renderer, controls;
+	
 		init();
 		animate();
 	
@@ -22,7 +22,9 @@
 			renderer = new THREE.WebGLRenderer();
 			renderer.setSize( window.innerWidth, window.innerHeight );
 			document.body.appendChild( renderer.domElement );
-				  
+
+			controls = new THREE.OrbitControls( camera, renderer.domElement );			
+			
 			var size = 10;
 			var arrowSize = 1;
 			var divisions = size;
@@ -53,33 +55,36 @@
             var arrowZ = new THREE.ArrowHelper( z, origin, arrowSize, colorB );
 			
 			//CREAR LAS GEOMETRÍAS
-            //Punto
-            
-			var geoCilindro = new THREE.Geometry();
-			var matPunto = new THREE.PointsMaterial( { color:'white', size: 0.1 } );
-            var zTemp = 0;
-            var res = 25.0;
-            for( var i = 0; i < res; i++){
-                for( var j = 0; j < res; j++){
-                    var punto = new THREE.Vector3();
-                    punto.x = (2.0 * (res - i) / res ) * Math.cos( ( j * 2.0 * Math.PI ) / res) ;
-                    punto.y = 5.0 * i / res;
-                    punto.z = (2.0 * (res - i) / res ) * Math.sin( ( j * 2.0 * Math.PI ) / res) ;
-                    geoCilindro.vertices.push( punto );
-                }
-            }
 			
-			//CREACION DE LAS HOJAS
+            //TRIANGULOS 1
+            var geoTriangulo = new THREE.Geometry();
 			
-			cono = new THREE.Points( geoCilindro, matPunto );
-		  
+			//VERTICES
+			var v0 = new THREE.Vector3( 0.0, 3.0, 0.0);
+			var v1 = new THREE.Vector3( 2.0,0.0, 2.0);
+			var v2 = new THREE.Vector3(2.0,0.0, -2.0);
+			geoTriangulo.vertices.push( v0 );
+			geoTriangulo.vertices.push( v1 );
+			geoTriangulo.vertices.push( v2 );
+			
+			//CARAS
+			geoTriangulo.faces.push( new THREE.Face3(0,1,2) );
+			geoTriangulo.computeFaceNormals();
+			
+			//MATERIAL Y CREACIÓN DEL OBJETO
+            var matPlano = new THREE.MeshBasicMaterial( { color:'yellow' } );
+			
+			//CREAR LOS OBJETOS
+			
+			triangulo = new THREE.Mesh( geoTriangulo, matPlano );
+			
 		  	//AGREGAR A LA ESCENA
-		  	//scene.add( gridHelperXY );
+			
+		  	scene.add( triangulo);
             scene.add( gridHelperXZ );
 		  	scene.add( arrowX );	
 		  	scene.add( arrowY );	
 		  	scene.add( arrowZ );	
-			scene.add( cono );
 			
 			camera.position.x = 5;
 			camera.position.y = 10;	 
@@ -90,14 +95,11 @@
     
     function animate() {
         render();
+		controls.update();
         requestAnimationFrame( animate );
     }
     
     function render(){
-        var dtime = Date.now()-startTime;
-        camera.position.x = 10*Math.cos(dtime/10000);
-        camera.position.z = 10*Math.sin(dtime/10000);
-        camera.lookAt( 0, 0, 0 );
         renderer.render( scene, camera );
     }
     </script>

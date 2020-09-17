@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Silent Hill</title>
+    <title>Silent Hill-Prueba de camaras </title>
     <style>
       html, body { margin: 0; padding: 0; overflow: hidden; }
         #info {
@@ -17,10 +17,9 @@
       <div id="info">
 			Tatiana Tolosa<br/>
             Valentina Gomez <br/>
-            Santiago maecha <br/>
+            Santiago mahecha <br/>
         </div>
     <script src="js/three.js"></script>
-	<script src="js/controls/OrbitControls.js"></script>
 	<script src="js/csg.js"></script>
 	<script src="js/THREE.CSG.js"></script>
     <script>
@@ -29,7 +28,112 @@
 		var camera; 
 		var renderer;
 		var controls;
+        
+        var geometry9, geometry10;
+		var hips, torso, head;
+		var rightFoot, rightLeg, rightArm, rightHand;
+		var leftFoot, leftLeg, leftArm, leftHand;
+		var startTime = Date.now();
+				
+		var upArrow = false;
+		var downArrow = false;
+		var leftArrow = false;
+		var rightArrow = false;
+		var scaleUp = false;
+		var scaleDown = false;
+		var xAxis = true;
+		var yAxis = false;
+		var zAxis = false;
 		
+		var thetaSum=0;
+		var positivo=false;
+        var container, stats;
+        var mousex=0,mousey=0;
+        var views, scene, renderer;
+        var windowWidth, windowHeight;
+		
+		//VISTAS DE LAS CAMARAS
+       
+		var views = [
+		
+				//CAMARA SUPERIOR CENTRAL
+		
+				{
+					left:0.3,bottom: 0,width: 0.4,height: 0.5,
+					eye: [ 0, 20, 0],
+					up: [ 0, 10, 0 ],
+					fov: 100,
+					updateCamera: function ( camera, scene ) {
+					  camera.position.y =  20;
+					  camera.position.x = 100;
+					  camera.position.z = -70;
+					  
+					  camera.lookAt( scene.position );
+
+					}
+				},
+				{
+				
+				//CAMARA SUPERIOR IZQUIEDA
+				
+					left: 0,
+					bottom: 0,
+					width: 0.3,
+					height: 0.5,
+					eye: [ 0, 100, 0 ],
+					up: [ 0,0,0 ],
+					fov: 100,
+					updateCamera: function ( camera, scene ) {
+
+					  camera.position.y =  10;
+					  camera.position.x =  50;
+					  
+					  camera.lookAt( camera.position );
+
+					}
+				},
+				{
+				
+				//CAMARA SUPERIOR DERECHA
+				
+					left: 0.7,
+					bottom: 0,
+					width: 0.3,
+					height: 0.5,
+					eye: [ 0, 20, 0],
+					up: [ 0, 0, 0 ],
+					fov: 100,
+					updateCamera: function ( camera, scene) {
+
+					  
+					  camera.position.z =  -40;
+					  camera.position.x =  70;
+					  
+					  camera.lookAt( scene.position );
+
+					}
+				},
+				
+				
+				//CAMARA DE ABAJO
+        {
+            left: 0,bottom: 0.5,width:1,height:0.5,
+					eye: [ 140, 800, 140 ],
+					up: [ 0, 1, 0],
+					fov: 60,
+					updateCamera: function ( camera, scene) {
+					
+					  camera.position.y = 10;
+					  camera.position.x = 70;
+					  
+					  camera.position.z = -100;
+					  camera.lookAt( scene.position );
+
+					}
+        }
+			];
+		
+
 		init();
 		animate();
 		function init(){
@@ -43,15 +147,93 @@
 	        renderer = new THREE.WebGLRenderer();
 	        renderer.setSize( window.innerWidth, window.innerHeight );
 	        document.body.appendChild( renderer.domElement );
-			controls = new THREE.OrbitControls( camera, renderer.domElement );
+            
+            //EVENTOS DE TECLADO
+			
+            for ( var ii = 0; ii < views.length; ++ ii ) {
+
+					var view = views[ ii ];
+					var camera = new THREE.PerspectiveCamera( view.fov, window.innerWidth / window.innerHeight, 1, 10000 );
+					camera.position.fromArray( view.eye );
+					camera.up.fromArray( view.up );
+					view.camera = camera;
+
+				}
+			
+			var onKeyDown = function ( event ) {
+				switch ( event.keyCode ) {
+					case 38: // TRASLADAR ADELANTE
+						upArrow = true;
+						break;
+					case 40: // TRASLADAR ATRÁS
+						downArrow = true;
+						break;
+					case 83: // ESCALA AGRANDAR
+						scaleUp = true;
+						break;
+					case 87: // ESCALA DISMINUIR
+						scaleDown = true;
+						break;
+					case 37: // ROTAR CW
+						leftArrow = true;
+						break;
+					case 39: // ROTAR CCW
+						rightArrow = true;
+						break;
+					case 88: // SELECCIONAR EJE X DE ROTACION
+						yAxis = false;
+						zAxis = false;
+						xAxis = true;
+						break;
+					case 89: // SELECCIONAR EJE Y DE ROTACION
+						xAxis = false;
+						zAxis = false;
+						yAxis = true;
+						break;
+					case 90: // SELECCIONAR EJE Z DE 
+						xAxis = false;
+						yAxis = false;
+						zAxis = true;
+						break;
+				}
+			};	  
+		  			
+			var onKeyUp = function ( event ) {
+				switch ( event.keyCode ) {
+					case 38: // TRASLADAR
+						upArrow = false;
+						break;
+					case 40: // TRASLADAR
+						downArrow = false;
+						break;
+					case 37: // ROTAR CW
+						leftArrow = false;
+						break;
+					case 39: // ROTAR CCW
+						rightArrow = false;
+						break;
+					case 83: // ESCALA AGRANDAR
+						scaleUp = false;
+						break;
+					case 87: // ESCALA DISMINUIR
+						scaleDown = false;
+						break;
+				}
+			};	  	
+			
+			document.addEventListener( 'keydown', onKeyDown, false );
+			document.addEventListener( 'keyup', onKeyUp, false );
 			
 			//ELEMENTOS COMUNES
 			
-			var size = 100;
-			var arrowSize = 1;
-			var divisions = size;
-			var origin = new THREE.Vector3( 0, 0, 0 );
-			
+			var color1 = new THREE.Color( 0xFFFFFF );
+		  	var color2 = new THREE.Color( 0x968C54 );
+		  	
+			var colorRd = new THREE.Color( 0x2C2710 );
+		  	var colorGd = new THREE.Color( 0x695C18 );
+		  	var colorBd = new THREE.Color( 0x968C54  );
+            
+           
 			//CREAR AMBIENTACION PARA LA NIEBLA
 			
 			var hemisphereLight = new THREE.HemisphereLight(0xfffafa,0x000000, .9)
@@ -61,7 +243,25 @@
 			sun.castShadow = true;
 			scene.add(sun);
 			
-			//CRACION DE  OBJETOS
+			//CREACION DE  OBJETOS
+            
+            geometry9 = new THREE.BoxGeometry( 1, 1, 1 );
+			for ( var i = 0; i < geometry9.faces.length; i ++ ) {
+				switch(i){
+					case 0: case 1: geometry9.faces[ i ].color = colorRd; break;
+					case 2: case 3: geometry9.faces[ i ].color = colorRd; break;
+					case 4: case 5: geometry9.faces[ i ].color = colorGd; break;
+					case 6: case 7: geometry9.faces[ i ].color = colorGd; break;
+					case 8: case 9: geometry9.faces[ i ].color = colorBd; break;
+					case 10: case 11: geometry9.faces[ i ].color = colorBd; break;
+				}				
+			}
+			geometry10 = new THREE.CylinderGeometry( .5, .5, 1, 32 );
+			for ( var i = 0; i < geometry10.faces.length; i++) { 
+				if( geometry10.faces[i].normal.y != 0) { 
+					geometry10.faces[i].color = colorGd; 
+				} 
+			}
 			
 			//SUELO
 			
@@ -73,8 +273,8 @@
 			//ANDENES
 			
 			var geometry = new THREE.BoxGeometry(100,0.5,100);
-			var material = new THREE.MeshLambertMaterial( { color:'green' } );
-			anden = new THREE.Mesh( geometry, material );
+			var material1 = new THREE.MeshLambertMaterial( { color:'green' } );
+			anden = new THREE.Mesh( geometry, material1 );
 			scene.add( anden);
 			
 			anden.translateY(1);
@@ -187,12 +387,78 @@
 			esfera2 = new THREE.Mesh( geometry2, material2 );
 			esfera3 = new THREE.Mesh( geometry2, material2 );
 			
-			// CRACION DE TUMBA PRINCIPAL
+			// CREACION DE TUMBA PRINCIPAL
 			
 			lapida = new THREE.Mesh( geometry3, material2 );
 			adorno = new THREE.Mesh( geometry4, material2 );
 			adorno1 = new THREE.Mesh( geometry5, material2 );
+            
+            //CREACION DEL PERSONAJE
+            
+			var material3 = new THREE.MeshBasicMaterial( { color: color1, vertexColors: THREE.FaceColors } );
+            hips = new THREE.Mesh( geometry9, material3 );	//CUBO
+			leftFoot = hips.clone();
 			
+			torso = new THREE.Mesh( geometry10, material3 ); //CILINDRO
+			leftLeg = torso.clone();
+			
+			leftLeg.applyMatrix( new THREE.Matrix4().makeScale(.5,2,.5) );
+			rightLeg = leftLeg.clone();
+            
+			leftLeg.applyMatrix( new THREE.Matrix4().makeTranslation(-.5,-1,0) );
+			rightLeg.applyMatrix( new THREE.Matrix4().makeTranslation( .5,-1,0) );
+			
+			rightFoot = leftFoot.clone();
+			leftFoot.applyMatrix( new THREE.Matrix4().getInverse( leftLeg.matrix ) );
+			leftFoot.applyMatrix( new THREE.Matrix4().makeScale(.5,.5,1) );
+			rightFoot.applyMatrix( new THREE.Matrix4().getInverse( rightLeg.matrix ) );
+			rightFoot.applyMatrix( new THREE.Matrix4().makeScale(.5,.5,1) );
+			leftFoot.applyMatrix( new THREE.Matrix4().makeTranslation(-.5,-.75,0) );
+			rightFoot.applyMatrix( new THREE.Matrix4().makeTranslation(.5,-.75,0) );
+			
+			torso.applyMatrix( new THREE.Matrix4().makeTranslation( 0, 1, 0) );
+			
+			hips.add(torso);
+			hips.add(leftLeg);
+			hips.add(rightLeg);
+			leftLeg.add(leftFoot);
+			rightLeg.add(rightFoot);
+            
+             //AGREGAR A LA ESCENA EL PERSONAJE
+ 
+			hips.translateX(50)
+			hips.translateZ(-50);
+			hips.translateY(3);
+			scene.add( hips );
+            
+			//MOVER LA CAMARA
+			camera.position.x = 10;
+			camera.position.y = 3;	 
+		  	camera.position.z = 10;			
+		  	camera.lookAt( origin );
+			
+			renderer.render( scene, camera );
+           
+			} 
+        function onDocumentMouseMove( event ) {
+
+				mouseX = ( event.clientX - windowWidth / 2 );
+				mouseY = ( event.clientY - windowHeight / 2 );
+
+			}
+
+			function updateSize() {
+
+				if ( windowWidth != window.innerWidth || windowHeight != window.innerHeight ) {
+
+					windowWidth = window.innerWidth;
+					windowHeight = window.innerHeight;
+
+					renderer.setSize( windowWidth, windowHeight );
+
+				}
+
+			}
 			//POSICIONAMIENTO E INVOCACION DE COLUMNAS
 			
 			columna.translateX(10)
@@ -267,7 +533,8 @@
 			columna11.translateZ(-65);
 			columna11.translateY(4);
 			scene.add(columna11);
-			
+            
+     
 			//POSICIONAMIENTO E INVOCACION DE TUMBA PRINCIPAL
 			
 			lapida.translateY(3.5)
@@ -289,13 +556,13 @@
 	}
 			CustomSinCurve.prototype = Object.create( THREE.Curve.prototype );
 			CustomSinCurve.prototype.constructor = CustomSinCurve;
-			CustomSinCurve.prototype.getPoint = function ( t ) {
+			CustomSinCurve.prototype.getPoint = function ( l ) {
 			
-			var tx = 0;
-			var ty = Math.sin(  Math.PI * t );
-			var tz = Math.cos(  Math.PI * t );
+			var lx = 0;
+			var ly = Math.sin(  Math.PI * l );
+			var lz = Math.cos(  Math.PI * l );
 
-			return new THREE.Vector3( tx, ty, tz ).multiplyScalar( this.scale );
+			return new THREE.Vector3( lx, ly, lz ).multiplyScalar( this.scale );
 	};
 			var path = new CustomSinCurve( 10 );
 			var geometry6 = new THREE.TubeGeometry( path, 20, 2, 8, false );
@@ -306,13 +573,13 @@
 	}
 			CustomSinCurve1.prototype = Object.create( THREE.Curve.prototype );
 			CustomSinCurve1.prototype.constructor = CustomSinCurve1;
-			CustomSinCurve1.prototype.getPoint = function ( t1 ) {
+			CustomSinCurve1.prototype.getPoint = function ( l1 ) {
 			
-			var t1x = Math.cos(  Math.PI * t1 );
-			var t1y = Math.sin(  Math.PI * t1 );
-			var t1z = 0;
+			var l1x = Math.cos(  Math.PI * l1 );
+			var l1y = Math.sin(  Math.PI * l1 );
+			var l1z = 0;
 
-			return new THREE.Vector3( t1x, t1y, t1z ).multiplyScalar( this.scale1 );
+			return new THREE.Vector3( l1x, l1y, l1z ).multiplyScalar( this.scale1 );
 	};
 			var path1 = new CustomSinCurve1( 10 );
 			var geometry7 = new THREE.TubeGeometry( path1, 20, 2, 8, false );
@@ -427,7 +694,7 @@
 			//CREACION DEL TRONCO
 			
 			var geometry = new THREE.CylinderGeometry( 1, 2, 40, 30 );
-			var material = new THREE.MeshBasicMaterial( {color: 0xA18262} );
+			var material = new THREE.LambertMaterial( {color: 0xA18262} );
 			tronco= new THREE.Mesh( geometry, material );
 			tronco1= new THREE.Mesh( geometry, material );
 			tronco2= new THREE.Mesh( geometry, material );
@@ -779,22 +1046,114 @@
 			tronco43.translateX(10);
 			scene.add(tronco43, hojas43);
 			
-			//POSICION DE LA CAMARA
-			
-			camera.position.x = 50;
-			camera.position.y = 50;
-		  	camera.position.z = -50;
-			camera.lookAt( adorno );
-			
-		}
+		//FUNCIONES DE ANIMACION DEL PERSONOAJE 
+		
 		function animate(){
 			requestAnimationFrame( animate );
-			controls.update();
 			render();
 		}
 		function render(){
+		
+             var dtime = Date.now()-startTime;
+		var tx=0, ty=0, tz=0;	//Variables para traslacion
+		var sc = 1;				//Variable para escala
+		var theta=0;			//Variable para ángulo de rotacion de piernas
+		var sigma=0;			//Variable para ángulo de rotación de caderas
+		
+		if(thetaSum>=60*Math.PI/180)
+			positivo = false;
+		if(thetaSum<=-60*Math.PI/180)
+			positivo = true;
+		
+		if(upArrow) {
+			tx=0; ty=0; tz=.1;
+			if(positivo)
+				theta = .1;
+			else
+				theta = -.1;
+		}
+		if(downArrow) {
+			tx=0; ty=0; tz=-.1;
+			if(positivo)
+				theta = .1;
+			else
+				theta = -.1;
+		}
+		thetaSum+=theta;
+		
+		if(rightArrow)
+			sigma = -.1;
+		if(leftArrow)
+			sigma = .1;
+		
+		//MATRIZ DE TRASLACIÓN
+		var t = new THREE.Matrix4();
+		t.set( 	1, 0, 0, tx,
+				0, 1, 0, ty, 
+				0, 0, 1, tz,
+				0, 0, 0, 1	);
+		
+		hips.matrix.multiply(t); 	//APLICAR LA TRASLACIÓN A NIVEL LOCAL
+		
+		//ROTACIONES
+		var ct1 = Math.cos(theta);
+		var ct2 = Math.cos(-theta);
+		var cs = Math.cos(sigma);
+		var st1 = Math.sin(theta);
+		var st2 = Math.sin(-theta);
+		var ss = Math.sin(sigma);
+		var r = new THREE.Matrix4();
+		var r1 = new THREE.Matrix4();
+		var r2 = new THREE.Matrix4();
+
+		//MATRIZ DE ROTACIÓN EN EJE Y
+		r.set( 	   cs,  0, ss, 0,
+					0,  1,  0, 0, 
+				  -ss,  0, cs, 0,
+					0,  0,  0, 1 );	
+		//MATRICES DE ROTACIÓN EN EJE LOCAL DE PIERNAS	
+		r1.set( 	1,  0,  0, 0,
+					0, ct1,-st1, 0, 
+					0, st1, ct1, 0,
+					0,  0,  0, 1 );	
+		r2.set( 	1,  0,  0, 0,
+					0, ct2,-st2, 0, 
+					0, st2, ct2, 0,
+					0,  0,  0, 1 );							
+		
+		//ROTACION EN UN EJE PARALELO
+		var tempMatrix = new THREE.Matrix4();
+		tempMatrix.copyPosition( hips.matrix );
+		hips.applyMatrix( new THREE.Matrix4().getInverse(tempMatrix) );
+		hips.applyMatrix(r);
+		hips.applyMatrix( tempMatrix );
+
+		leftLeg.applyMatrix(r1);
+		rightLeg.applyMatrix(r2);
+		updateSize();
+
+				for ( var ii = 0; ii < views.length; ++ ii ) {
+
+					var view = views[ ii ];
+					var camera = view.camera;
+
+					view.updateCamera( camera, scene );
+
+					var left = Math.floor( windowWidth * view.left );
+					var bottom = Math.floor( windowHeight * view.bottom );
+					var width = Math.floor( windowWidth * view.width );
+					var height = Math.floor( windowHeight * view.height );
+
+					renderer.setViewport( left, bottom, width, height );
+					renderer.setScissor( left, bottom, width, height );
+					renderer.setScissorTest( true );
+					renderer.setClearColor( view.background );
+					camera.aspect = width / height;
+					camera.updateProjectionMatrix()
 			renderer.render( scene, camera );
 		}
+        }
+        
     </script>
   </body>
 </html>
