@@ -1,7 +1,7 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html>
   <head>
-    <title>Ej. Arco</title>
+    <title> Toroide Poligonal</title>
     <style>
       html, body { margin: 0; padding: 0; overflow: hidden; }
     </style>
@@ -53,6 +53,16 @@
             var arrowY = new THREE.ArrowHelper( y, origin, arrowSize, colorG );
             var arrowZ = new THREE.ArrowHelper( z, origin, arrowSize, colorB );
 			
+			//ILUMINACION 
+			
+			
+			var hemisphereLight = new THREE.HemisphereLight(0xfffafa,0x000000, .9)
+			scene.add(hemisphereLight);
+			sun = new THREE.DirectionalLight( 0xcdc1c5, 0.9);
+			sun.position.set( 30,-10,30 );
+			sun.castShadow = true;
+			scene.add(sun);
+			
 			//CREAR LAS GEOMETRÍAS
             function CustomSinCurve( scale ) {
 
@@ -67,9 +77,9 @@ CustomSinCurve.prototype.constructor = CustomSinCurve;
 
 CustomSinCurve.prototype.getPoint = function ( t ) {
 
-	var tx = 0;
-	var ty = Math.sin(  Math.PI * t );
-	var tz = Math.cos(  Math.PI * t );
+	var tx =  Math.sin(  Math.PI * 2 *  t );
+	var ty = 0;
+	var tz = Math.cos(  Math.PI * 2 *  t );
 
 	return new THREE.Vector3( tx, ty, tz ).multiplyScalar( this.scale );
 
@@ -77,7 +87,7 @@ CustomSinCurve.prototype.getPoint = function ( t ) {
 
 	var path = new CustomSinCurve( 10 );
 	var geometry = new THREE.TubeGeometry( path, 20, 2, 8, false );
-	var material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
+	var material = new THREE.MeshLambertMaterial( { color: 'green' } );
 	var mesh = new THREE.Mesh( geometry, material );
 	scene.add( mesh );
 		  	//AGREGAR A LA ESCENA
@@ -87,9 +97,9 @@ CustomSinCurve.prototype.getPoint = function ( t ) {
 		  	scene.add( arrowY );	
 		  	scene.add( arrowZ );	
 			
-			camera.position.x = 5;
-			camera.position.y = 10;	 
-		  	camera.position.z =  10;
+			camera.position.x = 50;
+			camera.position.y = 30;	 
+		  	camera.position.z =  50;
 			
 		  	camera.lookAt( origin );
 			}
