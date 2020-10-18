@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>SILUETA COCHE</title>
+    <style>
+      html, body { margin: 0; padding: 0; overflow: hidden; }
+    </style>
+  </head>
+  <body>
+    <script src="js/three.min.js"></script>
+	<script src="js/controls/OrbitControls.js"></script>
+    <script>
+		var scene, aspect, camera, renderer;
+		
+		init();
+		animate();
+	
+		function init(){
+			scene = new THREE.Scene();
+			aspect = window.innerWidth / window.innerHeight;
+			camera = new THREE.PerspectiveCamera( 45, aspect, 0.1, 1000);
+			renderer = new THREE.WebGLRenderer();
+			renderer.setSize( window.innerWidth, window.innerHeight );
+			document.body.appendChild( renderer.domElement );
+			controls = new THREE.OrbitControls( camera, renderer.domElement );
+				  
+			var size = 10;
+			var arrowSize = 1;
+			var divisions = size;
+			var origin = new THREE.Vector3( 0, 0, 0 );
+			var x = new THREE.Vector3( 1, 0, 0 );
+			var y = new THREE.Vector3( 0, 1, 0 );
+		  	var z = new THREE.Vector3( 0, 0, 1 );
+			var color1 = new THREE.Color( 0xFFFFFF );
+		  	var color2 = new THREE.Color( 0x333333 );
+		  	var colorR = new THREE.Color( 0xAA3333 );
+		  	var colorG = new THREE.Color( 0x33AA33 );
+		  	var colorB = new THREE.Color( 0x333366 );
+		  
+		  	//CREAR LAS GRILLAS PARA EL ESCENARIO
+		  	var axesHelper = new THREE.AxesHelper( size );
+		  	var gridHelperXY = new THREE.GridHelper( size, divisions, color1, color1);
+		  	var gridHelperXZ = new THREE.GridHelper( size, divisions, color2, color2 );
+		  	var gridHelperYZ = new THREE.GridHelper( size, divisions, color2, color2 );
+            
+            //ROTARLAS PARA QUE QUEDEN EN EL ESPACIO ADECUADO
+            gridHelperXY.rotateOnWorldAxis ( x, THREE.Math.degToRad(90) );
+            gridHelperXZ.rotateOnWorldAxis ( y, THREE.Math.degToRad(90) );
+            gridHelperYZ.rotateOnWorldAxis ( z, THREE.Math.degToRad(90) );
+            
+            //CREAR LAS FLECHAS QUE INDICAN LOS EJES DE COORDENADAS 3D
+            var arrowX = new THREE.ArrowHelper( x, origin, arrowSize, colorR );
+            var arrowY = new THREE.ArrowHelper( y, origin, arrowSize, colorG );
+            var arrowZ = new THREE.ArrowHelper( z, origin, arrowSize, colorB );
+			
+			//ILUMINACION 
+			
+			var hemisphereLight = new THREE.HemisphereLight(0xfffafa,0x000000, .9)
+			scene.add(hemisphereLight);
+			sun = new THREE.DirectionalLight( 0xcdc1c5, 0.9);
+			sun.position.set( 30,-10,30 );
+			sun.castShadow = true;
+			scene.add(sun);
+			
+			//CREAR LAS GEOMETRÍAS
+			
+			// Cuerpo
+           var pointLight1 = new THREE.PointLight( 0xffffff, .2, 0 );
+            pointLight1.position.set( 10, 10, -10);
+            scene.add( pointLight1 );
+			
+			var pointLight2 = new THREE.PointLight( 0xffffff, .5, 100 );
+            pointLight2.position.set( 20, 20, 20 );
+            scene.add( pointLight2 );
+            
+            var curve2D = [];
+                curve2D[0] = new THREE.Vector2( -8, 0 );
+                curve2D[1] = new THREE.Vector2( -8.5, 0.5 );
+                curve2D[2] = new THREE.Vector2( -8.5, 1.5 );
+                curve2D[3] = new THREE.Vector2( -9, 3 );
+				curve2D[4] = new THREE.Vector2( -9.5, 3.5 );
+                curve2D[5] = new THREE.Vector2( -10.5, 4 );
+                curve2D[6] = new THREE.Vector2( -12.5, 4 );
+                curve2D[7] = new THREE.Vector2( -13.5, 3.5 );
+				curve2D[8] = new THREE.Vector2( -14.5, 2.5 );
+                curve2D[9] = new THREE.Vector2( -14, 1 );
+                curve2D[10] = new THREE.Vector2( -15, 1.5 );
+                curve2D[11] = new THREE.Vector2( -16, 2 );
+				curve2D[12] = new THREE.Vector2( -17, 4 );
+                curve2D[13] = new THREE.Vector2( -17, 5 );
+                curve2D[14] = new THREE.Vector2( -16, 5.5 );
+                curve2D[15] = new THREE.Vector2( -12, 7 );
+				curve2D[16] = new THREE.Vector2( -5, 9.5);
+                curve2D[17] = new THREE.Vector2( 0, 10 );
+                curve2D[18] = new THREE.Vector2( 6, 7 );
+                curve2D[19] = new THREE.Vector2( 9, 7.5 );
+				curve2D[20] = new THREE.Vector2( 13, 7 );
+                curve2D[21] = new THREE.Vector2( 17.5, 6 );
+                curve2D[22] = new THREE.Vector2( 18, 5 );
+                curve2D[23] = new THREE.Vector2( 17.5, 4 );
+				curve2D[24] = new THREE.Vector2( 16.5, 3 );
+                curve2D[25] = new THREE.Vector2( 15, 2 );
+                curve2D[26] = new THREE.Vector2( 14.5, 3 );
+                curve2D[27] = new THREE.Vector2( 13.5, 4 );
+				curve2D[28] = new THREE.Vector2( 11.5, 4 );
+                curve2D[29] = new THREE.Vector2( 10, 3.5 );
+                curve2D[30] = new THREE.Vector2( 9.5, 2.5 );
+                curve2D[31] = new THREE.Vector2( 9, 1.5 );
+				curve2D[32] = new THREE.Vector2( 9, 0 );
+				curve2D[33] = new THREE.Vector2( 0, 0 );
+				
+			var shape = new THREE.Shape();
+			shape.moveTo(0,0);
+			shape.splineThru(curve2D);
+
+            var material = new THREE.LineBasicMaterial( { color : 'white' } );
+            var resolution = 50;
+            var points = shape.getPoints( resolution );
+            var geometry = new THREE.BufferGeometry().setFromPoints( points );
+			curveObject= new THREE.Line (geometry, material);
+			
+			//EXTRUDE
+			
+			var extrudeSettings = {
+				steps: 5,
+				amount: 12,
+				bevelEnabled: true,
+				bevelThickness: 1,
+				bevelSize: 0.5,
+				bevelOffset: 0,
+				bevelSegments: 7
+			};
+
+			var geometryExt = new THREE.ExtrudeGeometry( shape, extrudeSettings );
+			var materialExt= new THREE.MeshStandardMaterial( { 
+				color: 'white', 
+				metalness: 0.5, 
+				roughness: 0.1,
+				opacity: 0.75,
+				transparent: true			
+			} );
+			
+			carrito = new THREE.Mesh( geometryExt, materialExt ) ;
+			carrito.rotation.x += 0.01;
+			scene.add( carrito );
+			
+		  	//scene.add( gridHelperXY );
+			
+            scene.add( gridHelperXZ );
+		  	scene.add( arrowX );	
+		  	scene.add( arrowY );	
+		  	scene.add( arrowZ );	
+			
+			camera.position.x = 30;
+			camera.position.y = 30;	 
+		  	camera.position.z = 30;
+			
+		  	camera.lookAt( origin );
+			}
+    
+			var animate = function () {
+			requestAnimationFrame( animate );
+
+				carrito.rotation.y += 0.001;
+
+				renderer.render( scene, camera );
+			};
+
+			animate();
+   
+		function animate(){
+			requestAnimationFrame( animate );
+			controls.update();
+			render();
+		}
+		function render(){
+			renderer.render( scene, camera );
+		}
+    </script>
+  </body>
+</html>
